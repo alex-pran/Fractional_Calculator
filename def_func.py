@@ -1,39 +1,33 @@
-
 from fractions import Fraction
-from math import remainder
-from unittest import result
 
-first_input = input("Enter first fraction: ")
-operation = input("Enter operation (+, -, *, /): ")
-second_input = input("Enter second fraction: ")
+from fractional import remainder
 
-first_fraction = Fraction(first_input)
-second_fraction = Fraction(second_input)
 
-if operation == "+":
-    result = first_fraction + second_fraction
+def mixed_fraction(fraction):
+    whole =fraction.numerator // fraction.denominator
+    remainder = fraction.numerator  % fraction.denominator
 
-elif operation == "-":
-    result = first_fraction - second_fraction
+    if remainder == 0:
+        return str(whole)
 
-elif operation == "*":
-    result = first_fraction * second_fraction
+    if whole == 0:
+        return f"{remainder}/{fraction.denominator}"
 
-elif operation == "/":
-    result = first_fraction / second_fraction
+    return f"{whole} {remainder}/{fraction.denominator}"
 
-else:
-    print("Unknown operation")
-    exit()
+def add_fraction(a, b):
+    result = a + b
+    result = mixed_fraction(result)
 
-whole = result.numerator // result.denominator
-remainder = result.numerator % result.denominator
+# Double Fraction
+fraction1 = Fraction(1, 2)
+fraction2 = Fraction(1, 3)
 
-if remainder == 0:
-    print(f"Result: {whole}")
+# sum
+add_fraction(fraction1, fraction2)
 
-else:
-    print(f"Result: {whole} / {remainder}/{result.denominator}")
+# Total
+print(result)
 
 
 
