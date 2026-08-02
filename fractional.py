@@ -1,18 +1,14 @@
 
 from fractions import Fraction
 from math import remainder
-numerator1 = int(input('Enter first numerator: '))
-denominator1 = int(input('Enter first denominator: '))
 
-numerator2 = int(input('Enter second numerator: '))
-denumerator2 = int(input('Enter second denumerator: '))
+user_input = input('Enter a fraction: ')
+fraction = Fraction(user_input)
+whole = fraction.numerator // fraction.denominator
+remainder = fraction.numerator % fraction.denominator
 
-a = Fraction(numerator1, denominator1)
-b = Fraction(numerator2, denumerator2)
+if remainder == 0:
+    print(f"Result: {whole}")
 
-result = a + b
-
-whole = result.numerator // result.denominator
-remainder = result.numerator % result.denominator
-
-print(f'{whole} {remainder}/{result.denominator}')
+else:
+    print(f"Result: {whole} {remainder}/{fraction.denominator}")
