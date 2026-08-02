@@ -30,7 +30,28 @@ def parse_fraction(user_input):
             return whole + fraction
 
     else:
-        raise ValueError
+        raise ValueError("Invalid fraction")
+
+
+def calculate(first_fraction, operation, second_fraction):
+
+    if operation == "+":
+        return first_fraction + second_fraction
+
+    elif operation == "-":
+        return first_fraction - second_fraction
+
+    elif operation == "*":
+        return first_fraction * second_fraction
+
+    elif operation == "/":
+        if second_fraction == 0:
+            raise ZeroDivisionError
+
+        return first_fraction / second_fraction
+
+    else:
+        raise ValueError("Unknown operation")
 
 
 first_input = input("Enter first fraction: ")
@@ -42,28 +63,17 @@ try:
     first_fraction = parse_fraction(first_input)
     second_fraction = parse_fraction(second_input)
 
-    if operation == "+":
-        result = first_fraction + second_fraction
-
-    elif operation == "-":
-        result = first_fraction - second_fraction
-
-    elif operation == "*":
-        result = first_fraction * second_fraction
-
-    elif operation == "/":
-        if second_fraction == 0:
-            print("Error: Cannot divide by zero")
-            exit()
-        else:
-            result = first_fraction / second_fraction
-
-    else:
-        print("Error: Unknown operation")
-        exit()
+    result = calculate(
+        first_fraction,
+        operation,
+        second_fraction
+    )
 
     print(f"Result: {to_mixed_number(result)}")
 
 
-except:
-    print("Error: Invalid fraction")
+except ZeroDivisionError:
+    print("Error: Cannot divide by zero")
+
+except ValueError:
+    print("Error: Invalid input")
