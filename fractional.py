@@ -1,14 +1,36 @@
 
 from fractions import Fraction
 from math import remainder
+from unittest import result
 
-user_input = input('Enter a fraction: ')
-fraction = Fraction(user_input)
-whole = fraction.numerator // fraction.denominator
-remainder = fraction.numerator % fraction.denominator
+first_input = input("Enter first fraction: ")
+operation = input("Enter operation (+, -, *, /): ")
+second_input = input("Enter second fraction: ")
+
+first_fraction = Fraction(first_input)
+second_fraction = Fraction(second_input)
+
+if operation == "+":
+    result = first_fraction + second_fraction
+
+elif operation == "-":
+    result = first_fraction - second_fraction
+
+elif operation == "*":
+    result = first_fraction * second_fraction
+
+elif operation == "/":
+    result = first_fraction / second_fraction
+
+else:
+    print("Unknown operation")
+    exit()
+
+whole = result.numerator // result.denominator
+remainder = result.numerator % result.denominator
 
 if remainder == 0:
     print(f"Result: {whole}")
 
 else:
-    print(f"Result: {whole} {remainder}/{fraction.denominator}")
+    print(f"Result: {whole} / {remainder}/{result.denominator}")
