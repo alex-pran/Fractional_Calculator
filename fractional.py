@@ -10,6 +10,8 @@ def to_mixed_number(fraction):
 
     if remainder == 0:
         return f"{sign}{whole}"
+    elif whole == 0:
+        return f"{sign}{remainder}/{fraction.denominator}"
     else:
         return f"{sign}{whole} {remainder}/{fraction.denominator}"
 
@@ -53,27 +55,33 @@ def calculate(first_fraction, operation, second_fraction):
     else:
         raise ValueError("Unknown operation")
 
-
-first_input = input("Enter first fraction: ")
-operation = input("Enter operation (+, -, *, /): ")
-second_input = input("Enter second fraction: ")
-
-
-try:
-    first_fraction = parse_fraction(first_input)
-    second_fraction = parse_fraction(second_input)
-
-    result = calculate(
-        first_fraction,
-        operation,
-        second_fraction
-    )
-
-    print(f"Result: {to_mixed_number(result)}")
+while True:
+    first_input = input("Enter first fraction: ")
+    operation = input("Enter operation (+, -, *, /): ")
+    second_input = input("Enter second fraction: ")
 
 
-except ZeroDivisionError:
-    print("Error: Cannot divide by zero")
+    try:
+        first_fraction = parse_fraction(first_input)
+        second_fraction = parse_fraction(second_input)
 
-except ValueError:
-    print("Error: Invalid input")
+        result = calculate(
+            first_fraction,
+            operation,
+            second_fraction
+        )
+
+        print(f"Result: {to_mixed_number(result)} ({float(result)})")
+
+
+    except ZeroDivisionError:
+        print("Error: Cannot divide by zero")
+
+    except ValueError:
+        print("Error: Invalid input")
+
+    again = input("Calculate again? (y/n): ")
+
+    if again.lower() != "y":
+        print("Goodbye!")
+        break
