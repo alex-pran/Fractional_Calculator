@@ -17,6 +17,41 @@ def to_mixed_number(fraction):
 
 
 def parse_fraction(user_input):
+    def tokenize_expression(expression):
+        tokens = []
+        current = ""
+
+        for i, char in enumerate(expression):
+
+            if char in "+-*":
+                if current.strip():
+                    tokens.append(current.strip())
+                    current = ""
+
+                tokens.append(char)
+
+            elif char == "/":
+
+                # Если "/" находится внутри дроби,
+                # оставляем его внутри текущего числа
+                if "/" not in current and current.strip():
+                    current += char
+
+                else:
+                    # Второй "/" — это операция деления
+                    if current.strip():
+                        tokens.append(current.strip())
+                        current = ""
+
+                    tokens.append("/")
+
+            else:
+                current += char
+
+        if current.strip():
+            tokens.append(current.strip())
+
+        return tokens
     parts = user_input.split()
 
     if len(parts) == 1:
@@ -33,6 +68,35 @@ def parse_fraction(user_input):
 
     else:
         raise ValueError("Invalid fraction")
+
+def evaluate_simple(tokens):
+    result = parse_fraction(tokens[0])
+
+    i = 1
+
+    while i < len(tokens):
+
+        operation = tokens[i]
+        number = parse_fraction(tokens[i + 1])
+
+        if operation == "+":
+            result = result + number
+
+        elif operation == "-":
+            result = result - number
+
+        elif operation == "*":
+            result = result * number
+
+        elif operation == "/":
+            if number == 0:
+                raise ZeroDivisionError
+
+            result = result / number
+
+        i += 2
+
+    return result
 
 
 def calculate(first_fraction, operation, second_fraction):
