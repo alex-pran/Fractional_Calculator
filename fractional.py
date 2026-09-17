@@ -197,6 +197,15 @@ def evaluate_simple(tokens):
         elif operation == "-":
             result = result - number
 
+        elif operation == "*":
+            result = result * number
+
+        elif operation == "/":
+            if number == 0:
+                raise ZeroDivisionError
+
+            result = result / number
+
         i += 2
 
     return result
