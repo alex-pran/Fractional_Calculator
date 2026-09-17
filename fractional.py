@@ -214,13 +214,45 @@ def evaluate_simple(tokens):
 
     return result
 
-expressions = input("Enter expressions: ")
+def press_button(expression, value):
+    return expression + value
 
-tokens = tokenize_expression(expressions)
+expression = ""
 
-result = evaluate_simple(tokens)
+while True:
+    button = input("Press button: ")
 
-print(f"Result: {to_mixed_number(result)} ({float(result)})")
+    if button == "=":
+        break
+
+    expression = press_button(expression, button)
+
+    print("Expression:", expression)
+
+# buttons = ["1", "/", "2", "+", "3", "/", "4"]
+#
+# for button in buttons:
+#     expression = press_button(expression, button)
+
+# expression = press_button (expression, "1")
+# expression = press_button(expression, "/")
+# expression = press_button(expression, "2")
+# expression = press_button(expression, "+")
+# expression = press_button(expression, "3")
+# expression = press_button(expression, "/")
+# expression = press_button(expression, "4")
+
+try:
+    tokens = tokenize_expression(expression)
+    result = evaluate_simple(tokens)
+    print(f"Result: {to_mixed_number(result)} ({float(result)})")
+
+except ZeroDivisionError:
+    print("Error: Cannot divide by zero")
+
+except (ValueError, TypeError):
+    print("Error: Invalid expression")
+
 
 # def add_to_expressions(expressions, value):
 #     return expressions + value
