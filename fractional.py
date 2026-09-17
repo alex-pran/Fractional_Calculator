@@ -155,6 +155,10 @@ def tokenize_expression(expression):
     current = ""
     for char in expression:
 
+        if char in "+-*" and not current.strip() and not tokens:
+            current += char
+            continue
+
         if char in "+-*":
             if current.strip():
                 tokens.append(current.strip())
@@ -215,4 +219,8 @@ expressions = input("Enter expressions: ")
 tokens = tokenize_expression(expressions)
 
 result = evaluate_simple(tokens)
+
 print(f"Result: {to_mixed_number(result)} ({float(result)})")
+
+# def add_to_expressions(expressions, value):
+#     return expressions + value
