@@ -225,6 +225,16 @@ while True:
     if button == "=":
         break
 
+    if button == "C":
+        expression = ""
+        print("Expression:", expression)
+        continue
+
+    if button == "<":
+        expression = expression[:-1]
+        print("Expression:", expression)
+        continue
+
     expression = press_button(expression, button)
 
     print("Expression:", expression)
