@@ -119,33 +119,91 @@ def calculate(first_fraction, operation, second_fraction):
     else:
         raise ValueError("Unknown operation")
 
-while True:
-    first_input = input("Enter first fraction: ")
-    operation = input("Enter operation (+, -, *, /): ")
-    second_input = input("Enter second fraction: ")
+# while True:
+#     first_input = input("Enter first fraction: ")
+#     operation = input("Enter operation (+, -, *, /): ")
+#     second_input = input("Enter second fraction: ")
+#
+#
+#     try:
+#         first_fraction = parse_fraction(first_input)
+#         second_fraction = parse_fraction(second_input)
+#
+#         result = calculate(
+#             first_fraction,
+#             operation,
+#             second_fraction
+#         )
+#
+#         print(f"Result: {to_mixed_number(result)} ({float(result)})")
+#
+#
+#     except ZeroDivisionError:
+#         print("Error: Cannot divide by zero")
+#
+#     except ValueError:
+#         print("Error: Invalid input")
+#
+#     again = input("Calculate again? (y/n): ")
+#
+#     if again.lower() != "y":
+#         print("Goodbye!")
+#         break
 
+def tokenize_expression(expression):
+    tokens = []
+    current = ""
+    for char in expression:
 
-    try:
-        first_fraction = parse_fraction(first_input)
-        second_fraction = parse_fraction(second_input)
+        if char in "+-*":
+            if current.strip():
+                tokens.append(current.strip())
+                current = ""
 
-        result = calculate(
-            first_fraction,
-            operation,
-            second_fraction
-        )
+            tokens.append(char)
 
-        print(f"Result: {to_mixed_number(result)} ({float(result)})")
+        elif char == "/":
 
+            if "/" not in current and current.strip():
+                current += char
 
-    except ZeroDivisionError:
-        print("Error: Cannot divide by zero")
+            else:
+                if current.strip():
+                    tokens.append(current.strip())
+                    current = ""
 
-    except ValueError:
-        print("Error: Invalid input")
+                tokens.append("/")
 
-    again = input("Calculate again? (y/n): ")
+        else:
+            current += char
 
-    if again.lower() != "y":
-        print("Goodbye!")
-        break
+    if current.strip():
+        tokens.append(current.strip())
+
+    return tokens
+
+def evaluate_simple(tokens):
+    result = parse_fraction(tokens[0])
+
+    i = 1
+
+    while i < len(tokens):
+        operation = tokens[i]
+        number = parse_fraction(tokens[i + 1])
+
+        if operation == "+":
+            result = result + number
+
+        elif operation == "-":
+            result = result - number
+
+        i += 2
+
+    return result
+
+expressions = input("Enter expressions: ")
+
+tokens = tokenize_expression(expressions)
+
+result = evaluate_simple(tokens)
+print(f"Result: {to_mixed_number(result)} ({float(result)})")
