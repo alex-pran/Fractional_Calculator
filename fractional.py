@@ -127,7 +127,13 @@ def evaluate_simple(tokens):
 def format_result(result):
     return f"{to_mixed_number(result)} ({float(result)})"
 
+ALLOWED_BUTTONS = "0123456789+-*/=C< "
+
 def handle_button(expression, button):
+    if button not in ALLOWED_BUTTONS:
+        return expression, "Error: Invalid button"
+
+
     if button == "C":
         return "", None
 
@@ -147,24 +153,24 @@ def handle_button(expression, button):
         except (ValueError, TypeError, IndexError):
             return "", "Error: Invalid expression"
 
-    return press_button(expression, button), None
+    return expression + button, ""
 
-def press_button(expression, value):
-    return expression + value
-
-
-expression = ""
+# def press_button(expression, value):
+#     return expression + value
 
 
-while True:
-    button = input("Press button: ")
+def run_calculator():
+    expression = ""
 
-    expression, message = handle_button(expression, button)
+    while True:
+        button = input("Press button: ")
 
-    if message:
-        if message.startswith("Error:"):
+        expression, message = handle_button(expression, button)
+
+        if message:
             print(message)
         else:
-            print(f"Result: {message}")
-    else:
-        print("Expression:", expression)
+            print("Expression:", expression)
+
+
+run_calculator()
