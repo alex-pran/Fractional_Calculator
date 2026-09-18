@@ -41,24 +41,45 @@ def tokenize_expression(expression):
     tokens = []
     current = ""
 
-    for char in expression:
+    i = 0
 
+    while i < len(expression):
+        char = expression[i]
+
+        # Операторы + - *
         if char in "+-*":
 
-            if current.strip():
-                tokens.append(current.strip())
-                current = ""
-
-            tokens.append(char)
-
-        elif char == "/":
-
-            if "/" not in current and current.strip():
-                current += char
+            if char == "-" and not current and (
+                not tokens or tokens[-1] in "+-*/"
+            ):
+                current = "-"
 
             else:
-                if current.strip():
-                    tokens.append(current.strip())
+                if current:
+                    tokens.append(current)
+                    current = ""
+
+                tokens.append(char)
+
+        # /
+        elif char == "/":
+
+            # Если следующий символ "-" —
+            # этот / является оператором деления
+            if i + 1 < len(expression) and expression[i + 1] == "-":
+                if current:
+                    tokens.append(current)
+                    current = ""
+
+                tokens.append("/")
+
+            # Иначе / является частью дроби
+            elif current and "/" not in current:
+                current += "/"
+
+            else:
+                if current:
+                    tokens.append(current)
                     current = ""
 
                 tokens.append("/")
@@ -66,8 +87,10 @@ def tokenize_expression(expression):
         else:
             current += char
 
-    if current.strip():
-        tokens.append(current.strip())
+        i += 1
+
+    if current:
+        tokens.append(current)
 
     return tokens
 
@@ -116,6 +139,7 @@ while True:
 
         try:
             tokens = tokenize_expression(expression)
+            #print("TOKENS:", tokens)
             result = evaluate_simple(tokens)
 
             print(
