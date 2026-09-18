@@ -135,7 +135,7 @@ def handle_button(expression, button):
 
 
     if button == "C":
-        return "", None
+        return "", ""
 
     if button == "<":
         return expression[:-1], ""
@@ -145,7 +145,7 @@ def handle_button(expression, button):
             tokens = tokenize_expression(expression)
             result = evaluate_simple(tokens)
 
-            return str(result), format_result(result)
+            return str(result), f"Result: {format_result(result)}"
 
         except ZeroDivisionError:
             return "", "Error: Cannot divide by zero"
@@ -157,15 +157,25 @@ def handle_button(expression, button):
 
 # def press_button(expression, value):
 #     return expression + value
+class Calculator:
+    def __init__(self):
+        self.expression = ""
 
+    def press(self, button):
+        self.expression, message = handle_button(
+            self.expression,
+            button
+        )
+
+        return self.expression, message
 
 def run_calculator():
-    expression = ""
+    calculator = Calculator()
 
     while True:
         button = input("Press button: ")
 
-        expression, message = handle_button(expression, button)
+        expression, message = calculator.press(button)
 
         if message:
             print(message)
