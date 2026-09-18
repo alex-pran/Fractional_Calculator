@@ -124,50 +124,58 @@ def evaluate_simple(tokens):
 
     return result
 
+
 def format_result(result):
     return f"{to_mixed_number(result)} ({float(result)})"
 
+
 ALLOWED_BUTTONS = "0123456789+-*/=C< "
 
+
 def handle_button(expression, button):
-    if button not in ALLOWED_BUTTONS:
-        return expression, "Error: Invalid button"
-
-
-    if button == "C":
-        return "", ""
-
-    if button == "<":
-        return expression[:-1], ""
-
-    if button == "=":
-        try:
-            tokens = tokenize_expression(expression)
-            result = evaluate_simple(tokens)
-
-            return str(result), f"Result: {format_result(result)}"
-
-        except ZeroDivisionError:
-            return "", "Error: Cannot divide by zero"
-
-        except (ValueError, TypeError, IndexError):
-            return "", "Error: Invalid expression"
-
     return expression + button, ""
 
-# def press_button(expression, value):
-#     return expression + value
+
 class Calculator:
     def __init__(self):
         self.expression = ""
 
     def press(self, button):
+        if button not in ALLOWED_BUTTONS:
+            return self.expression, "Error: Invalid button"
+
+        if button == "C":
+            self.expression = ""
+            return self.expression, ""
+
+        if button == "<":
+            self.expression = self.expression[:-1]
+            return self.expression, ""
+
+        if button == "=":
+            try:
+                tokens = tokenize_expression(self.expression)
+                result = evaluate_simple(tokens)
+
+                self.expression = str(result)
+
+                return self.expression, f"Result: {format_result(result)}"
+
+            except ZeroDivisionError:
+                self.expression = ""
+                return self.expression, "Error: Cannot divide by zero"
+
+            except (ValueError, TypeError, IndexError):
+                self.expression = ""
+                return self.expression, "Error: Invalid expression"
+
         self.expression, message = handle_button(
             self.expression,
             button
         )
 
         return self.expression, message
+
 
 def run_calculator():
     calculator = Calculator()
