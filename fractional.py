@@ -124,6 +124,30 @@ def evaluate_simple(tokens):
 
     return result
 
+def format_result(result):
+    return f"{to_mixed_number(result)} ({float(result)})"
+
+def handle_button(expression, button):
+    if button == "C":
+        return "", None
+
+    if button == "<":
+        return expression[:-1], ""
+
+    if button == "=":
+        try:
+            tokens = tokenize_expression(expression)
+            result = evaluate_simple(tokens)
+
+            return str(result), format_result(result)
+
+        except ZeroDivisionError:
+            return "", "Error: Cannot divide by zero"
+
+        except (ValueError, TypeError, IndexError):
+            return "", "Error: Invalid expression"
+
+    return press_button(expression, button), None
 
 def press_button(expression, value):
     return expression + value
@@ -135,40 +159,12 @@ expression = ""
 while True:
     button = input("Press button: ")
 
-    if button == "=":
+    expression, message = handle_button(expression, button)
 
-        try:
-            tokens = tokenize_expression(expression)
-            #print("TOKENS:", tokens)
-            result = evaluate_simple(tokens)
-
-            print(
-                f"Result: {to_mixed_number(result)} "
-                f"({float(result)})"
-            )
-
-            expression = str(result)
-
-        except ZeroDivisionError:
-            print("Error: Cannot divide by zero")
-            expression = ""
-
-        except (ValueError, TypeError, IndexError):
-            print("Error: Invalid expression")
-            expression = ""
-
-        continue
-
-    if button == "C":
-        expression = ""
+    if message:
+        if message.startswith("Error:"):
+            print(message)
+        else:
+            print(f"Result: {message}")
+    else:
         print("Expression:", expression)
-        continue
-
-    if button == "<":
-        expression = expression[:-1]
-        print("Expression:", expression)
-        continue
-
-    expression = press_button(expression, button)
-
-    print("Expression:", expression)
