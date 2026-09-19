@@ -775,5 +775,175 @@ def run_tests():
         print("Multiplication by negative fraction \033[91mFAILED\033[0m")
         all_passed = False
 
+
+    # Zero result test
+
+    calculator.clear()
+    calculator.press("1")
+    calculator.press("/")
+    calculator.press("2")
+    calculator.press("-")
+    calculator.press("1")
+    calculator.press("/")
+    calculator.press("2")
+
+    state = calculator.press_and_get_state("=")
+
+    if (
+        state["expression"] == "0"
+        and state["display"] == "0 (0.0)"
+        and state["result_shown"] is True
+        and state["message"] == "Result: 0 (0.0)"
+    ):
+        print("Zero result \033[92mPASSED\033[0m")
+    else:
+        print("Zero result \033[91mFAILED\033[0m")
+        all_passed = False
+
+    # Negative divided by negative test
+
+    calculator.clear()
+    calculator.press("-")
+    calculator.press("1")
+    calculator.press("/")
+    calculator.press("2")
+    calculator.press("/")
+    calculator.press("-")
+    calculator.press("1")
+    calculator.press("/")
+    calculator.press("4")
+
+    state = calculator.press_and_get_state("=")
+
+    if (
+        state["expression"] == "2"
+        and state["display"] == "2 (2.0)"
+        and state["result_shown"] is True
+        and state["message"] == "Result: 2 (2.0)"
+    ):
+        print("Negative divided by negative \033[92mPASSED\033[0m")
+    else:
+        print("Negative divided by negative \033[91mFAILED\033[0m")
+        all_passed = False
+
+
+
+    # Multiple backspace test
+
+    calculator.clear()
+    calculator.press("1")
+    calculator.press("/")
+    calculator.press("2")
+
+    state = calculator.press_and_get_state("<")
+
+    if (
+        state["expression"] == "1/"
+        and state["display"] == "1/"
+        and state["result_shown"] is False
+        and state["message"] == ""
+    ):
+        print("First backspace \033[92mPASSED\033[0m")
+    else:
+        print("First backspace \033[91mFAILED\033[0m")
+        all_passed = False
+
+    state = calculator.press_and_get_state("<")
+
+    if (
+        state["expression"] == "1"
+        and state["display"] == "1"
+        and state["result_shown"] is False
+        and state["message"] == ""
+    ):
+        print("Second backspace \033[92mPASSED\033[0m")
+    else:
+        print("Second backspace \033[91mFAILED\033[0m")
+        all_passed = False
+
+    # Backspace on empty calculator test
+
+    calculator.clear()
+
+    state = calculator.press_and_get_state("<")
+
+    if (
+        state["expression"] == ""
+        and state["display"] == ""
+        and state["result_shown"] is False
+        and state["message"] == ""
+    ):
+        print("Backspace on empty calculator \033[92mPASSED\033[0m")
+    else:
+        print("Backspace on empty calculator \033[91mFAILED\033[0m")
+        all_passed = False
+
+
+
+    # Clear on empty calculator test
+    calculator.clear()
+    state = calculator.press_and_get_state("C")
+
+    if (
+        state["expression"] == ""
+        and state["display"] == ""
+        and state["result_shown"] is False
+        and state["message"] == ""
+    ):
+        print("Clear on empty calculator \033[92mPASSED\033[0m")
+    else:
+        print("Clear on empty calculator \033[91mFAILED\033[0m")
+        all_passed = False
+
+    # Equals on empty calculator test
+    calculator.clear()
+    state = calculator.press_and_get_state("=")
+
+    if (
+        state["expression"] == ""
+        and state["display"] == ""
+        and state["result_shown"] is False
+        and state["message"] == "Error: Invalid expression"
+    ):
+        print("Equals on empty calculator \033[92mPASSED\033[0m")
+    else:
+        print("Equals on empty calculator \033[91mFAILED\033[0m")
+        all_passed = False
+
+    # Equals after single number test
+    calculator.clear()
+    calculator.press("5")
+    state = calculator.press_and_get_state("=")
+
+    if (
+        state["expression"] == "5"
+        and state["display"] == "5 (5.0)"
+        and state["result_shown"] is True
+        and state["message"] == "Result: 5 (5.0)"
+    ):
+        print("Equals after single number \033[92mPASSED\033[0m")
+    else:
+        print("Equals after single number \033[91mFAILED\033[0m")
+        all_passed = False
+
+
+
+    # Operator at end test
+    calculator.clear()
+    calculator.press("1")
+    calculator.press("+")
+    state = calculator.press_and_get_state("=")
+
+    if (
+        state["expression"] == ""
+        and state["display"] == ""
+        and state["result_shown"] is False
+        and state["message"] == "Error: Invalid expression"
+    ):
+        print("Operator at end \033[92mPASSED\033[0m")
+    else:
+        print("Operator at end \033[91mFAILED\033[0m")
+        all_passed = False
+
 if __name__ == "__main__":
-    run_tests()
+    run_calculator()
