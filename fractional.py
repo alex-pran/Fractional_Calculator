@@ -49,10 +49,10 @@ def tokenize_expression(expression):
         # Операторы + - *
         if char in "+-*":
 
-            if char == "-" and not current and (
+            if char in "+-" and not current and (
                 not tokens or tokens[-1] in "+-*/"
             ):
-                current = "-"
+                current = char
 
             else:
                 if current:
@@ -141,6 +141,9 @@ class Calculator:
         self.result_shown = False
 
     def calculate(self):
+        if not self.expression:
+            raise ValueError("Empty expression")
+
         tokens = tokenize_expression(self.expression)
         return evaluate_simple(tokens)
 
