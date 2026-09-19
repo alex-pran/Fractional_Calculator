@@ -185,6 +185,16 @@ class Calculator:
             self.clear()
             return "Error: Invalid expression"
 
+    def press_and_get_state(self, button):
+        _, message = self.press(button)
+
+        return {
+            "expression": self.get_expression(),
+            "display": self.get_display(),
+            "result_shown": self.is_result_shown(),
+            "message": message
+        }
+
     def press(self, button):
 
         if button not in self.allowed_buttons:
@@ -422,13 +432,6 @@ def run_tests():
         print("Display result \033[91mFAILED\033[0m")
         all_passed = False
 
-    print()
-
-    if all_passed:
-        print("ALL TESTS \033[92mPASSED\033[0m")
-    else:
-        print("SOME TESTS \033[91mFAILED\033[0m")
-
     # Get state test
 
     calculator.clear()
@@ -466,6 +469,288 @@ def run_tests():
         print("Get state after result \033[91mFAILED\033[0m")
         all_passed = False
 
+    # Press and get state test
+
+    calculator.clear()
+
+    state = calculator.press_and_get_state("1")
+
+    if (
+        state["expression"] == "1"
+        and state["display"] == "1"
+        and state["result_shown"] is False
+        and state["message"] == ""
+    ):
+        print("Press and get state \033[92mPASSED\033[0m")
+    else:
+        print("Press and get state \033[91mFAILED\033[0m")
+        all_passed = False
+
+    # Press and get state equals
+
+    calculator.clear()
+    calculator.press("1")
+    calculator.press("+")
+    calculator.press("2")
+
+    state = calculator.press_and_get_state("=")
+
+    if (
+        state["expression"] == "3"
+        and state["display"] == "3 (3.0)"
+        and state["result_shown"] is True
+        and state["message"] == "Result: 3 (3.0)"
+    ):
+        print("Press and get state equals \033[92mPASSED\033[0m")
+    else:
+        print("Press and get state equals \033[91mFAILED\033[0m")
+        all_passed = False
+
+    # Press invalid button test
+
+    calculator.clear()
+
+    state = calculator.press_and_get_state("X")
+
+    if (
+        state["expression"] == ""
+        and state["display"] == ""
+        and state["result_shown"] is False
+        and state["message"] == "Error: Invalid button"
+    ):
+        print("Press invalid button \033[92mPASSED\033[0m")
+    else:
+        print("Press invalid button \033[91mFAILED\033[0m")
+        all_passed = False
+
+    # Press digit after result test
+
+    calculator.clear()
+    calculator.press("1")
+    calculator.press("+")
+    calculator.press("2")
+    calculator.press_equals()
+
+    state = calculator.press_and_get_state("5")
+
+    if (
+        state["expression"] == "5"
+        and state["display"] == "5"
+        and state["result_shown"] is False
+        and state["message"] == ""
+    ):
+        print("Press digit after result \033[92mPASSED\033[0m")
+    else:
+        print("Press digit after result \033[91mFAILED\033[0m")
+        all_passed = False
+
+    # Press and get state C
+
+    calculator.clear()
+    calculator.press("1")
+    calculator.press("+")
+    calculator.press("2")
+
+    state = calculator.press_and_get_state("C")
+
+    if (
+        state["expression"] == ""
+        and state["display"] == ""
+        and state["result_shown"] is False
+        and state["message"] == ""
+    ):
+        print("Press and get state C \033[92mPASSED\033[0m")
+    else:
+        print("Press and get state C \033[91mFAILED\033[0m")
+        all_passed = False
+
+    # Press and get state backspace
+
+    calculator.clear()
+    calculator.press("1")
+    calculator.press("/")
+    calculator.press("2")
+
+    state = calculator.press_and_get_state("<")
+
+    if (
+        state["expression"] == "1/"
+        and state["display"] == "1/"
+        and state["result_shown"] is False
+        and state["message"] == ""
+    ):
+        print("Press and get state backspace \033[92mPASSED\033[0m")
+    else:
+        print("Press and get state backspace \033[91mFAILED\033[0m")
+        all_passed = False
+
+    # Press and get state error
+
+    calculator.clear()
+    calculator.press("1")
+    calculator.press("/")
+    calculator.press("0")
+
+    state = calculator.press_and_get_state("=")
+
+    if (
+        state["expression"] == ""
+        and state["display"] == ""
+        and state["result_shown"] is False
+        and state["message"] == "Error: Cannot divide by zero"
+    ):
+        print("Press and get state error \033[92mPASSED\033[0m")
+    else:
+        print("Press and get state error \033[91mFAILED\033[0m")
+        all_passed = False
+
+    print()
+
+    if all_passed:
+        print("ALL TESTS \033[92mPASSED\033[0m")
+    else:
+        print("SOME TESTS \033[91mFAILED\033[0m")
+
+
+    # Press operator after result test
+
+    calculator.clear()
+    calculator.press("1")
+    calculator.press("+")
+    calculator.press("2")
+    calculator.press_equals()
+
+    state = calculator.press_and_get_state("<")
+
+    if (
+            state["expression"] == ""
+            and state["display"] == ""
+            and state["result_shown"] is False
+            and state["message"] == ""
+    ):
+        print("Backspace after result \033[92mPASSED\033[0m")
+    else:
+        print("Backspace after result \033[91mFAILED\033[0m")
+        all_passed = False
+
+    # Clear after result test
+
+    calculator.clear()
+    calculator.press("1")
+    calculator.press("+")
+    calculator.press("2")
+    calculator.press_equals()
+
+    state = calculator.press_and_get_state("C")
+
+    if (
+        state["expression"] == ""
+        and state["display"] == ""
+        and state["result_shown"] is False
+        and state["message"] == ""
+    ):
+        print("Clear after result \033[92mPASSED\033[0m")
+    else:
+        print("Clear after result \033[91mFAILED\033[0m")
+        all_passed = False
+
+    # Negative result through buttons test
+
+    calculator.clear()
+    calculator.press("1")
+    calculator.press("-")
+    calculator.press("2")
+
+    state = calculator.press_and_get_state("=")
+
+    if (
+        state["expression"] == "-1"
+        and state["display"] == "-1 (-1.0)"
+        and state["result_shown"] is True
+        and state["message"] == "Result: -1 (-1.0)"
+    ):
+        print("Negative result through buttons \033[92mPASSED\033[0m")
+    else:
+        print("Negative result through buttons \033[91mFAILED\033[0m")
+        all_passed = False
+
+    # Negative fraction result test
+
+    calculator.clear()
+    calculator.press("1")
+    calculator.press("/")
+    calculator.press("2")
+    calculator.press("-")
+    calculator.press("3")
+    calculator.press("/")
+    calculator.press("4")
+
+    state = calculator.press_and_get_state("=")
+
+    if (
+        state["expression"] == "-1/4"
+        and state["display"] == "-1/4 (-0.25)"
+        and state["result_shown"] is True
+        and state["message"] == "Result: -1/4 (-0.25)"
+    ):
+        print("Negative fraction result \033[92mPASSED\033[0m")
+    else:
+        print("Negative fraction result \033[91mFAILED\033[0m")
+        all_passed = False
+
+    # Negative mixed number test
+
+    calculator.clear()
+    calculator.press("-")
+    calculator.press("1")
+    calculator.press(" ")
+    calculator.press("1")
+    calculator.press("/")
+    calculator.press("2")
+    calculator.press("+")
+    calculator.press("2")
+
+    state = calculator.press_and_get_state("=")
+
+    if (
+        state["expression"] == "1/2"
+        and state["display"] == "1/2 (0.5)"
+        and state["result_shown"] is True
+        and state["message"] == "Result: 1/2 (0.5)"
+    ):
+        print("Negative mixed number \033[92mPASSED\033[0m")
+    else:
+        print("Negative mixed number \033[91mFAILED\033[0m")
+        all_passed = False
+
+
+    # Division by negative fraction test
+
+    calculator.clear()
+    calculator.press("3")
+    calculator.press("/")
+    calculator.press("4")
+    calculator.press("/")
+    calculator.press("-")
+    calculator.press("1")
+    calculator.press("/")
+    calculator.press("2")
+
+    state = calculator.press_and_get_state("=")
+
+    if (
+        state["expression"] == "-3/2"
+        and state["display"] == "-1 1/2 (-1.5)"
+        and state["result_shown"] is True
+        and state["message"] == "Result: -1 1/2 (-1.5)"
+    ):
+        print("Division by negative fraction \033[92mPASSED\033[0m")
+    else:
+        print("Division by negative fraction \033[91mFAILED\033[0m")
+        all_passed = False
+
+
+
+
 if __name__ == "__main__":
     run_tests()
-    run_calculator()
