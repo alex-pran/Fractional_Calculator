@@ -750,7 +750,30 @@ def run_tests():
         all_passed = False
 
 
+    # Multiplication by negative fraction test
 
+    calculator.clear()
+    calculator.press("3")
+    calculator.press("/")
+    calculator.press("4")
+    calculator.press("*")
+    calculator.press("-")
+    calculator.press("2")
+    calculator.press("/")
+    calculator.press("3")
+
+    state = calculator.press_and_get_state("=")
+
+    if (
+        state["expression"] == "-1/2"
+        and state["display"] == "-1/2 (-0.5)"
+        and state["result_shown"] is True
+        and state["message"] == "Result: -1/2 (-0.5)"
+    ):
+        print("Multiplication by negative fraction \033[92mPASSED\033[0m")
+    else:
+        print("Multiplication by negative fraction \033[91mFAILED\033[0m")
+        all_passed = False
 
 if __name__ == "__main__":
     run_tests()
