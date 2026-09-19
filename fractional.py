@@ -46,7 +46,6 @@ def tokenize_expression(expression):
     while i < len(expression):
         char = expression[i]
 
-        # Операторы + - *
         if char in "+-*":
 
             if char in "+-" and not current and (
@@ -61,11 +60,8 @@ def tokenize_expression(expression):
 
                 tokens.append(char)
 
-        # /
         elif char == "/":
 
-            # Если следующий символ "-" —
-            # этот / является оператором деления
             if i + 1 < len(expression) and expression[i + 1] == "-":
                 if current:
                     tokens.append(current)
@@ -73,7 +69,6 @@ def tokenize_expression(expression):
 
                 tokens.append("/")
 
-            # Иначе / является частью дроби
             elif current and "/" not in current:
                 current += "/"
 
@@ -130,6 +125,7 @@ def format_result(result):
 
 
 class Calculator:
+
     def __init__(self):
         self.expression = ""
         self.allowed_buttons = "0123456789+-*/=C< "
@@ -142,9 +138,24 @@ class Calculator:
         tokens = tokenize_expression(self.expression)
         return evaluate_simple(tokens)
 
+    def get_result(self):
+        return self.calculate()
+
+    def is_result_shown(self):
+        return self.result_shown
+
+    def get_display(self):
+        if self.result_shown:
+            return format_result(self.get_result())
+
+        return self.expression
+
     def clear(self):
         self.expression = ""
         self.result_shown = False
+
+    def get_expression(self):
+        return self.expression
 
     def backspace(self):
         self.expression = self.expression[:-1]
@@ -157,15 +168,15 @@ class Calculator:
             self.expression = str(result)
             self.result_shown = True
 
-            return self.expression, f"Result: {format_result(result)}"
+            return f"Result: {self.get_display()}"
 
         except ZeroDivisionError:
             self.clear()
-            return self.expression, "Error: Cannot divide by zero"
+            return "Error: Cannot divide by zero"
 
         except (ValueError, TypeError, IndexError):
             self.clear()
-            return self.expression, "Error: Invalid expression"
+            return "Error: Invalid expression"
 
     def press(self, button):
 
@@ -181,7 +192,7 @@ class Calculator:
             return self.expression, ""
 
         if button == "=":
-            return self.press_equals()
+            return self.expression, self.press_equals()
 
         if self.result_shown:
             if button not in "+-*/":
@@ -211,13 +222,16 @@ def run_calculator():
 # TESTS
 
 def run_tests():
+
     all_passed = True
 
     def run_test(expression, expected):
+        nonlocal all_passed
+
         calculator = Calculator()
         calculator.expression = expression
 
-        expression_result, message = calculator.press_equals()
+        message = calculator.press_equals()
 
         print("Test:", expression)
         print("Result:", message)
@@ -227,11 +241,9 @@ def run_tests():
         else:
             print("FAILED")
             print("Expected:", expected)
-            nonlocal all_passed
             all_passed = False
 
         print()
-
 
     tests = [
         ("1/2+1/4", "Result: 3/4 (0.75)"),
@@ -245,17 +257,15 @@ def run_tests():
         ("1+2*3", "Result: 9 (9.0)"),
     ]
 
-
     for expression, expected in tests:
         run_test(expression, expected)
-
 
     # Error tests
 
     calculator = Calculator()
 
     calculator.expression = "1/0"
-    expression_result, message = calculator.press_equals()
+    message = calculator.press_equals()
 
     if message == "Error: Cannot divide by zero":
         print("Divide by zero PASSED")
@@ -263,16 +273,14 @@ def run_tests():
         print("Divide by zero FAILED")
         all_passed = False
 
-
     calculator.expression = "1+"
-    expression_result, message = calculator.press_equals()
+    message = calculator.press_equals()
 
     if message == "Error: Invalid expression":
         print("Invalid expression PASSED")
     else:
         print("Invalid expression FAILED")
         all_passed = False
-
 
     # Button tests
 
@@ -286,7 +294,6 @@ def run_tests():
         print("Backspace FAILED")
         all_passed = False
 
-
     calculator.expression = "123"
     calculator.clear()
 
@@ -296,6 +303,29 @@ def run_tests():
         print("Clear FAILED")
         all_passed = False
 
+    # Get expression test
+
+    calculator.clear()
+    calculator.press("1")
+    calculator.press("/")
+    calculator.press("2")
+
+    if calculator.get_expression() == "1/2":
+        print("Get expression PASSED")
+    else:
+        print("Get expression FAILED")
+        all_passed = False
+
+    # Get result test
+
+    calculator.clear()
+    calculator.expression = "1/2+1/4"
+
+    if calculator.get_result() == Fraction(3, 4):
+        print("Get result PASSED")
+    else:
+        print("Get result FAILED")
+        all_passed = False
 
     # Result state tests
 
@@ -309,7 +339,7 @@ def run_tests():
         print("New expression after result PASSED")
     else:
         print("New expression after result FAILED")
-
+        all_passed = False
 
     calculator.clear()
     calculator.expression = "1+2"
@@ -324,22 +354,67 @@ def run_tests():
         print("Continue after result PASSED")
     else:
         print("Continue after result FAILED")
-
+        all_passed = False
 
     # Repeated equals test
 
     calculator.clear()
     calculator.expression = "1+2"
 
-    expression_result, message1 = calculator.press_equals()
-    expression_result, message2 = calculator.press_equals()
+    message1 = calculator.press_equals()
+    message2 = calculator.press_equals()
 
     if message1 == "Result: 3 (3.0)" and message2 == "Result: 3 (3.0)":
         print("Repeated equals PASSED")
     else:
         print("Repeated equals FAILED")
+        all_passed = False
 
-        print()
+    # Result shown test
+
+    calculator.clear()
+    calculator.expression = "1+2"
+
+    if not calculator.is_result_shown():
+        print("Before equals PASSED")
+    else:
+        print("Before equals FAILED")
+        all_passed = False
+
+    calculator.press_equals()
+
+    if calculator.is_result_shown():
+        print("After equals PASSED")
+    else:
+        print("After equals FAILED")
+        all_passed = False
+
+    # Get display test
+
+    calculator.clear()
+    calculator.press("1")
+    calculator.press("/")
+    calculator.press("2")
+
+    if calculator.get_display() == "1/2":
+        print("Display expression PASSED")
+    else:
+        print("Display expression FAILED")
+        all_passed = False
+
+    calculator.press("+")
+    calculator.press("1")
+    calculator.press("/")
+    calculator.press("4")
+    calculator.press_equals()
+
+    if calculator.get_display() == "3/4 (0.75)":
+        print("Display result PASSED")
+    else:
+        print("Display result FAILED")
+        all_passed = False
+
+    print()
 
     if all_passed:
         print("ALL TESTS PASSED")
@@ -348,5 +423,4 @@ def run_tests():
 
 
 if __name__ == "__main__":
-    #run_tests()
-    run_calculator()
+    run_tests()
