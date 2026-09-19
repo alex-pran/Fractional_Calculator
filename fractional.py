@@ -129,35 +129,41 @@ def format_result(result):
     return f"{to_mixed_number(result)} ({float(result)})"
 
 
-ALLOWED_BUTTONS = "0123456789+-*/=C< "
+# ALLOWED_BUTTONS = "0123456789+-*/=C< "
 
 
-def handle_button(expression, button):
-    return expression + button, ""
 
 
 class Calculator:
     def __init__(self):
         self.expression = ""
+        self.allowed_buttons = "0123456789+-*/=C< "
+        self.result_shown = False
+
+    def calculate(self):
+        tokens = tokenize_expression(self.expression)
+        return evaluate_simple(tokens)
 
     def press(self, button):
-        if button not in ALLOWED_BUTTONS:
+        if button not in self.allowed_buttons:
             return self.expression, "Error: Invalid button"
 
         if button == "C":
             self.expression = ""
+            self.result_shown = False
             return self.expression, ""
 
         if button == "<":
             self.expression = self.expression[:-1]
+            self.result_shown = False
             return self.expression, ""
 
         if button == "=":
             try:
-                tokens = tokenize_expression(self.expression)
-                result = evaluate_simple(tokens)
+                result = self.calculate()
 
                 self.expression = str(result)
+                self.result_shown = True # added
 
                 return self.expression, f"Result: {format_result(result)}"
 
@@ -169,12 +175,14 @@ class Calculator:
                 self.expression = ""
                 return self.expression, "Error: Invalid expression"
 
-        self.expression, message = handle_button(
-            self.expression,
-            button
-        )
+        if self.result_shown:
+            if button not in "+-*/":
+                self.expression = ""
 
-        return self.expression, message
+            self.result_shown = False
+
+        self.expression += button
+        return self.expression, ""
 
 
 def run_calculator():
@@ -190,5 +198,8 @@ def run_calculator():
         else:
             print("Expression:", expression)
 
+calculator = Calculator()
+calculator.expression = "1/2+1/2"
+print(calculator.calculate())
 
 run_calculator()
