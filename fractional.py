@@ -150,6 +150,13 @@ class Calculator:
 
         return self.expression
 
+    def get_state(self):
+        return {
+            "expression": self.get_expression(),
+            "display": self.get_display(),
+            "result_shown": self.is_result_shown()
+        }
+
     def clear(self):
         self.expression = ""
         self.result_shown = False
@@ -185,14 +192,15 @@ class Calculator:
 
         if button == "C":
             self.clear()
-            return self.expression, ""
+            return self.get_display(), ""
 
         if button == "<":
             self.backspace()
-            return self.expression, ""
+            return self.get_display(), ""
 
         if button == "=":
-            return self.expression, self.press_equals()
+            message = self.press_equals()
+            return self.get_display(), message
 
         if self.result_shown:
             if button not in "+-*/":
@@ -202,7 +210,7 @@ class Calculator:
 
         self.expression += button
 
-        return self.expression, ""
+        return self.get_display(), ""
 
 
 def run_calculator():
@@ -237,9 +245,9 @@ def run_tests():
         print("Result:", message)
 
         if message == expected:
-            print("PASSED")
+            print("\033[92mPASSED\033[0m")
         else:
-            print("FAILED")
+            print("\033[91mFAILED\033[0m")
             print("Expected:", expected)
             all_passed = False
 
@@ -268,18 +276,18 @@ def run_tests():
     message = calculator.press_equals()
 
     if message == "Error: Cannot divide by zero":
-        print("Divide by zero PASSED")
+        print("Divide by zero \033[92mPASSED\033[0m")
     else:
-        print("Divide by zero FAILED")
+        print("Divide by zero \033[91mFAILED\033[0m")
         all_passed = False
 
     calculator.expression = "1+"
     message = calculator.press_equals()
 
     if message == "Error: Invalid expression":
-        print("Invalid expression PASSED")
+        print("Invalid expression \033[92mPASSED\033[0m")
     else:
-        print("Invalid expression FAILED")
+        print("Invalid expression \033[91mFAILED\033[0m")
         all_passed = False
 
     # Button tests
@@ -289,18 +297,18 @@ def run_tests():
     calculator.backspace()
 
     if calculator.expression == "12":
-        print("Backspace PASSED")
+        print("Backspace \033[92mPASSED\033[0m")
     else:
-        print("Backspace FAILED")
+        print("Backspace \033[91mFAILED\033[0m")
         all_passed = False
 
     calculator.expression = "123"
     calculator.clear()
 
     if calculator.expression == "":
-        print("Clear PASSED")
+        print("Clear \033[92mPASSED\033[0m")
     else:
-        print("Clear FAILED")
+        print("Clear \033[91mFAILED\033[0m")
         all_passed = False
 
     # Get expression test
@@ -311,9 +319,9 @@ def run_tests():
     calculator.press("2")
 
     if calculator.get_expression() == "1/2":
-        print("Get expression PASSED")
+        print("Get expression \033[92mPASSED\033[0m")
     else:
-        print("Get expression FAILED")
+        print("Get expression \033[91mFAILED\033[0m")
         all_passed = False
 
     # Get result test
@@ -322,9 +330,9 @@ def run_tests():
     calculator.expression = "1/2+1/4"
 
     if calculator.get_result() == Fraction(3, 4):
-        print("Get result PASSED")
+        print("Get result \033[92mPASSED\033[0m")
     else:
-        print("Get result FAILED")
+        print("Get result \033[91mFAILED\033[0m")
         all_passed = False
 
     # Result state tests
@@ -336,9 +344,9 @@ def run_tests():
     calculator.press("5")
 
     if calculator.expression == "5":
-        print("New expression after result PASSED")
+        print("New expression after result \033[92mPASSED\033[0m")
     else:
-        print("New expression after result FAILED")
+        print("New expression after result \033[91mFAILED\033[0m")
         all_passed = False
 
     calculator.clear()
@@ -348,12 +356,12 @@ def run_tests():
     calculator.press("+")
     calculator.press("4")
 
-    expression_result, message = calculator.press_equals()
+    message = calculator.press_equals()
 
     if message == "Result: 7 (7.0)":
-        print("Continue after result PASSED")
+        print("Continue after result \033[92mPASSED\033[0m")
     else:
-        print("Continue after result FAILED")
+        print("Continue after result \033[91mFAILED\033[0m")
         all_passed = False
 
     # Repeated equals test
@@ -365,9 +373,9 @@ def run_tests():
     message2 = calculator.press_equals()
 
     if message1 == "Result: 3 (3.0)" and message2 == "Result: 3 (3.0)":
-        print("Repeated equals PASSED")
+        print("Repeated equals \033[92mPASSED\033[0m")
     else:
-        print("Repeated equals FAILED")
+        print("Repeated equals \033[91mFAILED\033[0m")
         all_passed = False
 
     # Result shown test
@@ -376,17 +384,17 @@ def run_tests():
     calculator.expression = "1+2"
 
     if not calculator.is_result_shown():
-        print("Before equals PASSED")
+        print("Before equals \033[92mPASSED\033[0m")
     else:
-        print("Before equals FAILED")
+        print("Before equals \033[91mFAILED\033[0m")
         all_passed = False
 
     calculator.press_equals()
 
     if calculator.is_result_shown():
-        print("After equals PASSED")
+        print("After equals \033[92mPASSED\033[0m")
     else:
-        print("After equals FAILED")
+        print("After equals \033[91mFAILED\033[0m")
         all_passed = False
 
     # Get display test
@@ -397,9 +405,9 @@ def run_tests():
     calculator.press("2")
 
     if calculator.get_display() == "1/2":
-        print("Display expression PASSED")
+        print("Display expression \033[92mPASSED\033[0m")
     else:
-        print("Display expression FAILED")
+        print("Display expression \033[91mFAILED\033[0m")
         all_passed = False
 
     calculator.press("+")
@@ -409,18 +417,55 @@ def run_tests():
     calculator.press_equals()
 
     if calculator.get_display() == "3/4 (0.75)":
-        print("Display result PASSED")
+        print("Display result \033[92mPASSED\033[0m")
     else:
-        print("Display result FAILED")
+        print("Display result \033[91mFAILED\033[0m")
         all_passed = False
 
     print()
 
     if all_passed:
-        print("ALL TESTS PASSED")
+        print("ALL TESTS \033[92mPASSED\033[0m")
     else:
-        print("SOME TESTS FAILED")
+        print("SOME TESTS \033[91mFAILED\033[0m")
 
+    # Get state test
+
+    calculator.clear()
+    calculator.press("1")
+    calculator.press("/")
+    calculator.press("2")
+
+    state = calculator.get_state()
+
+    if (
+        state["expression"] == "1/2"
+        and state["display"] == "1/2"
+        and state["result_shown"] is False
+    ):
+        print("Get state before result \033[92mPASSED\033[0m")
+    else:
+        print("Get state before result \033[91mFAILED\033[0m")
+        all_passed = False
+
+    calculator.press("+")
+    calculator.press("1")
+    calculator.press("/")
+    calculator.press("2")
+    calculator.press_equals()
+
+    state = calculator.get_state()
+
+    if (
+        state["expression"] == "1"
+        and state["display"] == "1 (1.0)"
+        and state["result_shown"] is True
+    ):
+        print("Get state after result \033[92mPASSED\033[0m")
+    else:
+        print("Get state after result \033[91mFAILED\033[0m")
+        all_passed = False
 
 if __name__ == "__main__":
     run_tests()
+    run_calculator()
