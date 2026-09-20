@@ -3,22 +3,159 @@ import tkinter as tk
 
 root = tk.Tk()
 root.title("Fractional Calculator")
-root.geometry("320x500")
+root.geometry("500x600")
 
 
-display = tk.Label(
-    root,
-    text="0",
-    font=("Arial", 28),
-    anchor="e"
-)
+# =========================
+# ДАННЫЕ КАЛЬКУЛЯТОРА
+# =========================
 
-display.pack(
+main_number = ""
+numerator = ""
+denominator = ""
+
+
+# =========================
+# ГЛАВНЫЙ ЭКРАН
+# =========================
+
+display_frame = tk.Frame(root)
+
+display_frame.pack(
     fill="x",
     padx=10,
     pady=20
 )
 
+
+# Основное значение слева
+
+main_display = tk.Label(
+    display_frame,
+    text="0",
+    font=("Arial", 28),
+    anchor="e"
+)
+
+main_display.pack(
+    side="left",
+    pady=(22, 0)
+)
+
+
+# Дробь справа
+
+fraction_display = tk.Frame(display_frame)
+
+fraction_display.pack(
+    side="left",
+    padx=2
+)
+
+
+# Числитель
+
+numerator_display = tk.Label(
+    fraction_display,
+    text="",
+    font=("Arial", 22)
+)
+
+numerator_display.pack()
+
+
+# Линия дроби
+
+display_line = tk.Frame(
+    fraction_display,
+    height=2,
+    width=70,
+    bg="black"
+)
+
+display_line.pack(
+    fill="x"
+)
+
+
+# Знаменатель
+
+denominator_display = tk.Label(
+    fraction_display,
+    text="",
+    font=("Arial", 22)
+)
+
+denominator_display.pack()
+
+
+# =========================
+# ОБНОВЛЕНИЕ ДИСПЛЕЯ
+# =========================
+
+def update_display():
+
+    main_display.config(
+        text=main_number if main_number else "0"
+    )
+
+    numerator_display.config(
+        text=numerator
+    )
+
+    denominator_display.config(
+        text=denominator
+    )
+
+
+# =========================
+# ОСНОВНОЕ ЧИСЛО
+# =========================
+
+def add_main_number(number):
+
+    global main_number
+
+    if len(main_number) < 10:
+
+        main_number += number
+
+        update_display()
+
+
+# =========================
+# ЧИСЛИТЕЛЬ
+# =========================
+
+def add_numerator(number):
+
+    global numerator
+
+    if len(numerator) < 10:
+
+        numerator += number
+
+        update_display()
+
+
+# =========================
+# ЗНАМЕНАТЕЛЬ
+# =========================
+
+def add_denominator(number):
+
+    global denominator
+
+    if len(denominator) < 10:
+
+        denominator += number
+
+        update_display()
+
+
+# =========================
+# ОСНОВНАЯ ОБЛАСТЬ
+# =========================
 
 main_frame = tk.Frame(root)
 
@@ -28,147 +165,188 @@ main_frame.pack(
 )
 
 
-# Клавиатура слева
+# ==================================================
+# ЛЕВАЯ ЧАСТЬ — ОСНОВНАЯ КЛАВИАТУРА
+# ==================================================
 
-button_frame = tk.Frame(main_frame)
+main_keyboard = tk.Frame(main_frame)
 
-button_frame.grid(
+main_keyboard.grid(
     row=0,
     column=0,
-    padx=10
+    padx=20
 )
 
 
-button_1 = tk.Button(
-    button_frame,
-    text="1",
-    font=("Arial", 20)
-)
-button_1.grid(row=0, column=0, padx=5, pady=5)
+main_digits = [
+    ("1", 0, 0),
+    ("2", 0, 1),
+    ("3", 1, 0),
+    ("4", 1, 1),
+    ("5", 2, 0),
+    ("6", 2, 1),
+    ("7", 3, 0),
+    ("8", 3, 1),
+    ("9", 4, 0),
+    ("0", 4, 1)
+]
 
 
-button_2 = tk.Button(
-    button_frame,
-    text="2",
-    font=("Arial", 20)
-)
-button_2.grid(row=0, column=1, padx=5, pady=5)
+for number, row, column in main_digits:
+
+    button = tk.Button(
+        main_keyboard,
+        text=number,
+        font=("Arial", 20),
+        width=3,
+        height=1,
+        command=lambda n=number: add_main_number(n)
+    )
+
+    button.grid(
+        row=row,
+        column=column,
+        padx=5,
+        pady=5
+    )
 
 
-button_3 = tk.Button(
-    button_frame,
-    text="3",
-    font=("Arial", 20)
-)
-button_3.grid(row=1, column=0, padx=5, pady=5)
-
-
-button_4 = tk.Button(
-    button_frame,
-    text="4",
-    font=("Arial", 20)
-)
-button_4.grid(row=1, column=1, padx=5, pady=5)
-
-
-button_5 = tk.Button(
-    button_frame,
-    text="5",
-    font=("Arial", 20)
-)
-button_5.grid(row=2, column=0, padx=5, pady=5)
-
-
-button_6 = tk.Button(
-    button_frame,
-    text="6",
-    font=("Arial", 20)
-)
-button_6.grid(row=2, column=1, padx=5, pady=5)
-
-
-button_7 = tk.Button(
-    button_frame,
-    text="7",
-    font=("Arial", 20)
-)
-button_7.grid(row=3, column=0, padx=5, pady=5)
-
-
-button_8 = tk.Button(
-    button_frame,
-    text="8",
-    font=("Arial", 20)
-)
-button_8.grid(row=3, column=1, padx=5, pady=5)
-
-
-button_9 = tk.Button(
-    button_frame,
-    text="9",
-    font=("Arial", 20)
-)
-button_9.grid(row=4, column=0, padx=5, pady=5)
-
-
-button_0 = tk.Button(
-    button_frame,
-    text="0",
-    font=("Arial", 20)
-)
-button_0.grid(row=4, column=1, padx=5, pady=5)
-
-
-# Дробь справа
+# ==================================================
+# ПРАВАЯ ЧАСТЬ — ДРОБЬ
+# ==================================================
 
 fraction_frame = tk.Frame(main_frame)
 
 fraction_frame.grid(
     row=0,
     column=1,
-    padx=10
+    padx=20
 )
 
 
-numerator = tk.Entry(
+# ==================================================
+# ЧИСЛИТЕЛЬ
+# ==================================================
+
+numerator_label = tk.Label(
     fraction_frame,
-    font=("Arial", 24),
-    width=10,
-    justify="center"
+    text="Числитель",
+    font=("Arial", 12)
 )
 
-numerator.insert(0, "0")
+numerator_label.pack()
 
-numerator.pack()
 
-numerator.pack()
+numerator_keyboard = tk.Frame(fraction_frame)
 
+numerator_keyboard.pack(
+    pady=5
+)
+
+
+numerator_digits = [
+    ("1", 0, 0),
+    ("2", 0, 1),
+    ("3", 0, 2),
+    ("4", 0, 3),
+    ("5", 0, 4),
+    ("6", 1, 0),
+    ("7", 1, 1),
+    ("8", 1, 2),
+    ("9", 1, 3),
+    ("0", 1, 4)
+]
+
+
+for number, row, column in numerator_digits:
+
+    button = tk.Button(
+        numerator_keyboard,
+        text=number,
+        font=("Arial", 16),
+        width=2,
+        command=lambda n=number: add_numerator(n)
+    )
+
+    button.grid(
+        row=row,
+        column=column,
+        padx=2,
+        pady=2
+    )
+
+
+# ==================================================
+# ЛИНИЯ МЕЖДУ КЛАВИАТУРАМИ
+# ==================================================
 
 fraction_line = tk.Frame(
     fraction_frame,
-    height=2,
+    height=3,
     width=180,
     bg="black"
 )
 
 fraction_line.pack(
     fill="x",
-    pady=3
+    pady=8
 )
 
 
-denominator = tk.Entry(
+# ==================================================
+# ЗНАМЕНАТЕЛЬ
+# ==================================================
+
+denominator_label = tk.Label(
     fraction_frame,
-    font=("Arial", 24),
-    width=10,
-    justify="center"
+    text="Знаменатель",
+    font=("Arial", 12)
 )
 
-denominator.insert(0, "1")
+denominator_label.pack()
 
-denominator.pack()
 
-denominator.pack()
+denominator_keyboard = tk.Frame(fraction_frame)
 
+denominator_keyboard.pack(
+    pady=5
+)
+
+
+denominator_digits = [
+    ("1", 0, 0),
+    ("2", 0, 1),
+    ("3", 0, 2),
+    ("4", 0, 3),
+    ("5", 0, 4),
+    ("6", 1, 0),
+    ("7", 1, 1),
+    ("8", 1, 2),
+    ("9", 1, 3),
+    ("0", 1, 4)
+]
+
+
+for number, row, column in denominator_digits:
+
+    button = tk.Button(
+        denominator_keyboard,
+        text=number,
+        font=("Arial", 16),
+        width=2,
+        command=lambda n=number: add_denominator(n)
+    )
+
+    button.grid(
+        row=row,
+        column=column,
+        padx=2,
+        pady=2
+    )
+
+
+# =========================
+# ЗАПУСК
+# =========================
 
 root.mainloop()
